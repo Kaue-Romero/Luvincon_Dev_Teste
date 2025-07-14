@@ -68,6 +68,9 @@ export const ShopGrid = ({
                                 <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-gray-100">
                                     {item.name}
                                 </h3>
+                                <p className="mb-2 text-gray-700 dark:text-gray-300">
+                                    {item.description}
+                                </p>
                                 <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">
                                     Quantity:{' '}
                                     <span className="font-medium">

@@ -51,6 +51,10 @@ const AddItemModal = ({ isOpen, onClose, item }: AddItemModalProps) => {
                         {item.name}
                     </h2>
 
+                    <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+                        {item.description}
+                    </p>
+
                     <p className="text-lg font-semibold text-indigo-600 dark:text-indigo-400">
                         {returnPrice(item.price)}
                     </p>
