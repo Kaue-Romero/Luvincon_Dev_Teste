@@ -6,8 +6,8 @@ WORKDIR /var/www/html
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     git gosu curl zip unzip libpng-dev libonig-dev libxml2-dev \
-    libzip-dev libcurl4-openssl-dev libssl-dev \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+    libzip-dev libcurl4-openssl-dev libssl-dev gnupg ca-certificates \
+    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath
 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
