@@ -1,5 +1,6 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
+import FlashMessage from '@/Components/FlashMessage';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { useCart } from '@/Contexts/CartContext';
@@ -195,6 +196,8 @@ export default function Authenticated({
             )}
 
             <main>{children}</main>
+
+            <FlashMessage />
         </div>
     );
 }

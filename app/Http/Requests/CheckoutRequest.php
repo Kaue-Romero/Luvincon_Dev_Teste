@@ -44,8 +44,7 @@ class CheckoutRequest extends FormRequest
             try {
                 $value = preg_replace('/\D/', '', $value);
                 $response = Http::get("https://viacep.com.br/ws/{$value}/json/");
-
-                if ($response->failed() || $response->json('erro') === true) {
+                if ($response->failed() || $response->json('erro') === "true") {
                     $fail('O CEP informado não é válido.');
                 }
             } catch (\Exception $e) {

@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 export default function CartCheckout() {
     const { state, clearCart, removeItem } = useCart();
     const { items } = state;
-
     const totalPrice = state.items.reduce(
         (total, item) => total + item.price * item.quantity,
         0,
@@ -50,7 +49,6 @@ export default function CartCheckout() {
     return (
         <AuthenticatedLayout>
             <Head title="Carrinho" />
-
             <div className="py-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                     <div className="py-12">

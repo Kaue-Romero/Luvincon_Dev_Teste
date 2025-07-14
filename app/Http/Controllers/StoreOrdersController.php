@@ -6,6 +6,7 @@ use App\Contracts\StoreOrdersInterface;
 use App\Http\Requests\CheckoutRequest;
 use App\Services\StoreOrdersService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class StoreOrdersController extends Controller
 {
@@ -26,11 +27,12 @@ class StoreOrdersController extends Controller
     {
         $validated = $request->validated();
 
-        $processOrder = $this->storeOrdersInterface->processOrder($validated);
-
-        // return response()->json([
-        //     'message' => 'Order placed successfully',
-        //     'order' => $order,
-        // ]);
+        try {
+            $this->storeOrdersInterface->processOrder($validated);
+            return redirect()->back()->with('success', 'Pedido realizado com sucesso!');
+        } catch (\Exception $e) {
+            Log::error('Erro ao processar pedido: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Falha ao processar pedido: ' . $e->getMessage());
+        }
     }
 }

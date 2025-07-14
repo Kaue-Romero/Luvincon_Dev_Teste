@@ -18,12 +18,18 @@ export interface Item {
     image_url: string;
 }
 
+export interface flash {
+    success?: string;
+    error?: string;
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
     auth: {
         user: User;
     };
+    flash?: flash;
     items?: Item[];
     ziggy: Config & { location: string };
 };

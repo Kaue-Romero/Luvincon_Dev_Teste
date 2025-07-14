@@ -16,12 +16,17 @@ class StoreOrdersService implements StoreOrdersInterface
 
     public function processOrder($data): array
     {
-        dd($data);
+
+        if (empty($data['items']) || !is_array($data['items'])) {
+            throw new \Exception("Itens do pedido inválidos.");
+        }
+
         $context = stream_context_create([
             'http' => [
                 'method' => 'POST',
                 'header' => "Content-Type: application/json\r\n" .
-                    "Authorization: wQ8ehU2x4gj93CH9lMTnelQO3GcFvLzyqn8Fj3WA0ffQy57I60\r\n"
+                    "Authorization: wQ8ehU2x4gj93CH9lMTnelQO3GcFvLzyqn8Fj3WA0ffQy57I60\r\n",
+                'content' => json_encode($data['items']),
             ]
         ]);
 
@@ -44,22 +49,7 @@ class StoreOrdersService implements StoreOrdersInterface
             throw new \Exception("Resposta da API inválida: " . json_last_error_msg());
         }
 
-        if (!is_array($data)) {
-            if (isset($data->status)) {
-                throw new \Exception($data->status);
-            }
-            throw new \Exception("Formato inesperado da resposta da API.");
-        }
-
-        return array_map(fn($item) => new CartItemDto(
-            product_id: (string)$item->product_id,
-            name: $item->name,
-            description: $item->description,
-            price: (float)$item->price,
-            category: $item->category,
-            brand: $item->brand,
-            stock: (int)$item->stock,
-            image_url: $item->image_url
-        ), $data);
+        $data = (array) $data;
+        return $data;
     }
 }
