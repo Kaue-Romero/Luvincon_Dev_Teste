@@ -39,6 +39,11 @@ class StoreItemsController extends Controller
         }
     }
 
+    public function cart()
+    {
+        return Inertia::render('CartCheckout');
+    }
+
     // /**
     //  * Display the specified resource.
     //  */

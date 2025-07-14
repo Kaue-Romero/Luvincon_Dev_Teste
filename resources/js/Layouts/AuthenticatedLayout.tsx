@@ -2,6 +2,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import { useCart } from '@/Contexts/CartContext';
 import { Link, usePage } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 
@@ -10,6 +11,7 @@ export default function Authenticated({
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
     const user = usePage().props.auth.user;
+    const { state } = useCart();
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -31,7 +33,20 @@ export default function Authenticated({
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
                                 >
-                                    Dashboard
+                                    Catálogo
+                                </NavLink>
+                                <NavLink
+                                    href={route('cart')}
+                                    active={route().current('cart')}
+                                >
+                                    <span className="relative">
+                                        Carrinho
+                                        {state.items.length > 0 && (
+                                            <span className="absolute -right-2 -top-1 inline-flex h-3 w-3 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                                                {state.items.length}
+                                            </span>
+                                        )}
+                                    </span>
                                 </NavLink>
                             </div>
                         </div>
@@ -135,7 +150,13 @@ export default function Authenticated({
                             href={route('dashboard')}
                             active={route().current('dashboard')}
                         >
-                            Dashboard
+                            Catálogo
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('cart')}
+                            active={route().current('cart')}
+                        >
+                            Carrinho
                         </ResponsiveNavLink>
                     </div>
 
@@ -151,14 +172,14 @@ export default function Authenticated({
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')}>
-                                Profile
+                                Perfil
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
                                 href={route('logout')}
                                 as="button"
                             >
-                                Log Out
+                                Sair
                             </ResponsiveNavLink>
                         </div>
                     </div>

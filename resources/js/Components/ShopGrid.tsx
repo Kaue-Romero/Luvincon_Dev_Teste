@@ -1,5 +1,7 @@
 import { returnPrice } from '@/helpers';
 import { Item } from '@/types';
+import { useState } from 'react';
+import AddItemModal from './AddItemModal';
 
 export const ShopGrid = ({
     items,
@@ -8,9 +10,16 @@ export const ShopGrid = ({
     items: Item[];
     errors: { general?: string };
 }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<Item>({} as Item);
+
     return (
         <div className="font-inter min-h-screen bg-gray-50 py-12 dark:bg-gray-900">
-            {/* General error display */}
+            <AddItemModal
+                isOpen={isOpen}
+                onClose={() => setIsOpen(false)}
+                item={selectedItem}
+            />
             {errors.general && (
                 <div className="mb-6 rounded-lg border border-red-400 bg-red-100 p-4 text-red-700 shadow-md dark:border-red-600 dark:bg-red-900 dark:text-red-300">
                     <strong className="font-bold">Error:</strong>{' '}
@@ -71,7 +80,13 @@ export const ShopGrid = ({
                             </div>
 
                             <div className="mt-5">
-                                <button className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-lg font-semibold text-white shadow-md transition-colors duration-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                <button
+                                    onClick={() => {
+                                        setSelectedItem(item);
+                                        setIsOpen(true);
+                                    }}
+                                    className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-lg font-semibold text-white shadow-md transition-colors duration-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                                >
                                     Adicionar ao carrinho
                                 </button>
                             </div>

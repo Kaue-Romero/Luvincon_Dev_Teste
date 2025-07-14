@@ -15,7 +15,10 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', [StoreItemsController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
+    Route::get('/dashboard', [StoreItemsController::class, 'index'])->name('dashboard');
+    Route::get('/cart', [StoreItemsController::class, 'cart'])->name('cart');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
