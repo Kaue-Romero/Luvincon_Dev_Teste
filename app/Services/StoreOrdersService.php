@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Contracts\StoreItemsInterface;
+use App\Contracts\StoreOrdersInterface;
 use App\DTO\CartItemDto;
 
-class StoreItemsService implements StoreItemsInterface
+class StoreOrdersService implements StoreOrdersInterface
 {
     private $api_url = "https://luvinco.proxy.beeceptor.com";
 
@@ -14,17 +14,18 @@ class StoreItemsService implements StoreItemsInterface
         $this->api_url = env('API_URL', $this->api_url);
     }
 
-    public function getAllItems(): array
+    public function processOrder($data): array
     {
+        dd($data);
         $context = stream_context_create([
             'http' => [
-                'method' => 'GET',
+                'method' => 'POST',
                 'header' => "Content-Type: application/json\r\n" .
                     "Authorization: wQ8ehU2x4gj93CH9lMTnelQO3GcFvLzyqn8Fj3WA0ffQy57I60\r\n"
             ]
         ]);
 
-        $response = @file_get_contents($this->api_url . '/products', false, $context);
+        $response = @file_get_contents($this->api_url . '/orders', false, $context);
 
         if ($response === false) {
             $error = error_get_last()['message'] ?? 'Unknown error';

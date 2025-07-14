@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StoreItemsController;
+use App\Http\Controllers\StoreOrdersController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,6 +19,7 @@ Route::get('/', function () {
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/dashboard', [StoreItemsController::class, 'index'])->name('dashboard');
     Route::get('/cart', [StoreItemsController::class, 'cart'])->name('cart');
+    Route::post('/checkout', [StoreOrdersController::class, 'store'])->name('checkout');
 });
 
 Route::middleware('auth')->group(function () {

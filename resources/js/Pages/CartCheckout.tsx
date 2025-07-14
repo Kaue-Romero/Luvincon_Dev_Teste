@@ -1,10 +1,11 @@
 import { useCart } from '@/Contexts/CartContext';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
+import { useMask } from '@react-input/mask';
 import { useEffect } from 'react';
 
 export default function CartCheckout() {
-    const { state } = useCart();
+    const { state, clearCart, removeItem } = useCart();
     const { items } = state;
 
     const totalPrice = state.items.reduce(
@@ -23,17 +24,28 @@ export default function CartCheckout() {
         neighborhood: '',
         city: '',
         state: '',
+        items: items.map((item) => ({
+            product_id: item.product_id,
+            quantity: item.quantity,
+        })),
     });
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        post('/checkout'); // Route to handle the checkout in Laravel
+        post('/checkout');
     };
 
+    const cardNumberRef = useMask({
+        mask: '____ ____ ____ ____',
+        replacement: { _: /\d/ },
+    });
+    const cardExpiryRef = useMask({ mask: '__/__', replacement: { _: /\d/ } });
+    const cardCvvRef = useMask({ mask: '___', replacement: { _: /\d/ } });
+    const cepRef = useMask({ mask: '_____-___', replacement: { _: /\d/ } });
+
     useEffect(() => {
-        console.log('Cart items:', state.items);
-    }, [state]);
+        cardNumberRef.current?.focus();
+    }, [cardNumberRef]);
 
     return (
         <AuthenticatedLayout>
@@ -45,9 +57,20 @@ export default function CartCheckout() {
                         <div className="mx-auto max-w-7xl px-6 lg:px-8">
                             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                                 <div className="space-y-4 lg:col-span-2">
-                                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-                                        Seu Carrinho
-                                    </h2>
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                            Seu Carrinho
+                                        </h2>
+
+                                        {items.length > 0 && (
+                                            <button
+                                                onClick={clearCart}
+                                                className="rounded bg-red-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-red-700"
+                                            >
+                                                Limpar Carrinho
+                                            </button>
+                                        )}
+                                    </div>
 
                                     {items.length === 0 ? (
                                         <p className="text-gray-600 dark:text-gray-300">
@@ -82,8 +105,20 @@ export default function CartCheckout() {
                                                                 Quantidade:{' '}
                                                                 {item.quantity}
                                                             </p>
+
+                                                            <button
+                                                                onClick={() =>
+                                                                    removeItem(
+                                                                        item.product_id,
+                                                                    )
+                                                                }
+                                                                className="mt-1 text-sm text-red-600 hover:underline dark:text-red-400"
+                                                            >
+                                                                Remover
+                                                            </button>
                                                         </div>
                                                     </div>
+
                                                     <div className="text-right">
                                                         <p className="font-semibold text-gray-900 dark:text-gray-100">
                                                             R${' '}
@@ -109,13 +144,13 @@ export default function CartCheckout() {
                                     onSubmit={handleSubmit}
                                     className="h-fit rounded bg-white p-6 shadow dark:bg-gray-800"
                                 >
-                                    {/* Credit Card Fields */}
                                     <div className="mb-6 space-y-4">
                                         <h4 className="text-md font-semibold text-gray-800 dark:text-gray-100">
                                             Dados do Cartão
                                         </h4>
 
                                         <input
+                                            ref={cardNumberRef}
                                             type="text"
                                             name="cardNumber"
                                             value={data.cardNumber}
@@ -155,6 +190,7 @@ export default function CartCheckout() {
 
                                         <div className="flex gap-4">
                                             <input
+                                                ref={cardExpiryRef}
                                                 type="text"
                                                 name="cardExpiry"
                                                 value={data.cardExpiry}
@@ -168,6 +204,7 @@ export default function CartCheckout() {
                                                 className="w-1/2 rounded border px-4 py-2 dark:bg-gray-700 dark:text-white"
                                             />
                                             <input
+                                                ref={cardCvvRef}
                                                 type="text"
                                                 name="cardCvv"
                                                 value={data.cardCvv}
@@ -181,6 +218,7 @@ export default function CartCheckout() {
                                                 className="w-1/2 rounded border px-4 py-2 dark:bg-gray-700 dark:text-white"
                                             />
                                         </div>
+
                                         {(errors.cardExpiry ||
                                             errors.cardCvv) && (
                                             <p className="text-sm text-red-500">
@@ -190,13 +228,13 @@ export default function CartCheckout() {
                                         )}
                                     </div>
 
-                                    {/* Address Fields */}
                                     <div className="mb-6 space-y-4">
                                         <h4 className="text-md font-semibold text-gray-800 dark:text-gray-100">
                                             Endereço de Entrega
                                         </h4>
 
                                         <input
+                                            ref={cepRef}
                                             type="text"
                                             name="cep"
                                             value={data.cep}
@@ -231,69 +269,99 @@ export default function CartCheckout() {
                                             </p>
                                         )}
 
-                                        <div className="flex gap-4">
-                                            <input
-                                                type="text"
-                                                name="number"
-                                                value={data.number}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        'number',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                placeholder="Número"
-                                                className="w-1/2 rounded border px-4 py-2 dark:bg-gray-700 dark:text-white"
-                                            />
-                                            <input
-                                                type="text"
-                                                name="neighborhood"
-                                                value={data.neighborhood}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        'neighborhood',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                placeholder="Bairro"
-                                                className="w-1/2 rounded border px-4 py-2 dark:bg-gray-700 dark:text-white"
-                                            />
+                                        <div className="flex flex-wrap gap-4">
+                                            <div className="flex min-w-[150px] flex-1 flex-col">
+                                                <input
+                                                    type="text"
+                                                    name="number"
+                                                    value={data.number}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'number',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="Número"
+                                                    className="rounded border px-4 py-2 dark:bg-gray-700 dark:text-white"
+                                                />
+                                                {errors.number && (
+                                                    <p className="text-sm text-red-500">
+                                                        {errors.number}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div className="flex min-w-[150px] flex-1 flex-col">
+                                                <input
+                                                    type="text"
+                                                    name="neighborhood"
+                                                    value={data.neighborhood}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'neighborhood',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="Bairro"
+                                                    className="rounded border px-4 py-2 dark:bg-gray-700 dark:text-white"
+                                                />
+                                                {errors.neighborhood && (
+                                                    <p className="text-sm text-red-500">
+                                                        {errors.neighborhood}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
 
-                                        <div className="flex gap-4">
-                                            <input
-                                                type="text"
-                                                name="city"
-                                                value={data.city}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        'city',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                placeholder="Cidade"
-                                                className="w-1/2 rounded border px-4 py-2 dark:bg-gray-700 dark:text-white"
-                                            />
-                                            <input
-                                                type="text"
-                                                name="state"
-                                                value={data.state}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        'state',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                placeholder="UF"
-                                                className="w-1/2 rounded border px-4 py-2 dark:bg-gray-700 dark:text-white"
-                                            />
+                                        <div className="mt-4 flex flex-wrap gap-4">
+                                            <div className="flex min-w-[150px] flex-1 flex-col">
+                                                <input
+                                                    type="text"
+                                                    name="city"
+                                                    value={data.city}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'city',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="Cidade"
+                                                    className="rounded border px-4 py-2 dark:bg-gray-700 dark:text-white"
+                                                />
+                                                {errors.city && (
+                                                    <p className="mt-1 text-sm text-red-500">
+                                                        {errors.city}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div className="flex min-w-[150px] flex-[0.4] flex-col">
+                                                <input
+                                                    type="text"
+                                                    name="state"
+                                                    value={data.state}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'state',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="UF"
+                                                    maxLength={2}
+                                                    className="rounded border px-4 py-2 dark:bg-gray-700 dark:text-white"
+                                                />
+                                                {errors.state && (
+                                                    <p className="mt-1 text-sm text-red-500">
+                                                        {errors.state}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <h3 className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-100">
                                         Resumo do Pedido
                                     </h3>
 
-                                    {/* Summary */}
                                     <div className="mb-6 space-y-2 text-gray-700 dark:text-gray-200">
                                         <div className="flex justify-between">
                                             <span>Subtotal</span>

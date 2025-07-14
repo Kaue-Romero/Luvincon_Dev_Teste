@@ -43,17 +43,4 @@ class StoreItemsController extends Controller
     {
         return Inertia::render('CartCheckout');
     }
-
-    // /**
-    //  * Display the specified resource.
-    //  */
-    // public function show(StoreItems $storeItems)
-    // {
-    //     try {
-    //         $item = $this->storeService->getItemById($storeOrders->id);
-    //         return response()->json($item);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => $e->getMessage()], 404);
-    //     }
-    // }
 }

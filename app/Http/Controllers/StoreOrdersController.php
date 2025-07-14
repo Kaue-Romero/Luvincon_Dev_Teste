@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StoreOrders;
+use App\Contracts\StoreOrdersInterface;
+use App\Http\Requests\CheckoutRequest;
+use App\Services\StoreOrdersService;
 use Illuminate\Http\Request;
 
 class StoreOrdersController extends Controller
 {
+    public function __construct(protected StoreOrdersInterface $storeOrdersInterface) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -16,50 +20,17 @@ class StoreOrdersController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CheckoutRequest $request)
     {
-        //
-    }
+        $validated = $request->validated();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(StoreOrders $storeOrders)
-    {
-        //
-    }
+        $processOrder = $this->storeOrdersInterface->processOrder($validated);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(StoreOrders $storeOrders)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, StoreOrders $storeOrders)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(StoreOrders $storeOrders)
-    {
-        //
+        // return response()->json([
+        //     'message' => 'Order placed successfully',
+        //     'order' => $order,
+        // ]);
     }
 }

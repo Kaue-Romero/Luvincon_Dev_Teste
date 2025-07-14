@@ -11,10 +11,4 @@ interface StoreItemsInterface
      * @throws \Exception
      */
     public function getAllItems(): array;
-
-    /**
-     * @param int $id
-     * @return CartItemDto
-     */
-    public function getItemById(int $id): CartItemDto;
 }
