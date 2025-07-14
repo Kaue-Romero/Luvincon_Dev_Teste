@@ -24,6 +24,19 @@ Uma aplicação web moderna que exibe uma **vitrine de produtos** e permite a **
 
 ---
 
+## 🧠 Arquitetura e Boas Práticas
+
+Este projeto foi desenvolvido com foco em **baixo acoplamento e alta coesão**, utilizando:
+
+- 🧩 **Service Classes** para encapsular regras de negócio
+- 🔌 **Interfaces** para contratos claros e desacoplados
+- 📦 **DTOs (Data Transfer Objects)** para transportar dados de forma consistente
+- 🧪 **Testes automatizados com [Pest](https://pestphp.com)** para garantir comportamento confiável
+
+Essas práticas tornam o projeto mais escalável, testável e de fácil manutenção.
+
+---
+
 ## 📸 Funcionalidades
 
 - Listagem de produtos em uma vitrine elegante  
